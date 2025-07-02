@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
     try {
         const { title, flavor, description, type } = req.body;
 
-        if (!title || !flavor || !type) {
+        if (!title || !flavor) {
             return res.status(400).json({ message: "Заполните все обязательные поля" });
         }
 
@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
             title,
             flavor,
             description,
-            type,
             createdAt: new Date()
         });
 
