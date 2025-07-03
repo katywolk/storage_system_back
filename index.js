@@ -82,6 +82,6 @@ app.get("/api/me", (req, res) => {
     }
 });
 
-app.listen(port, process.env.HOST_IP,() =>
-    console.log(`🚀 Сервер запущен на http://${process.env.HOST_IP}:${port}`)
+app.listen(port, '0.0.0.0',() =>
+    console.log(`🚀 Сервер запущен на http://0.0.0.0:${port}`)
 );
