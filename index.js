@@ -67,10 +67,6 @@ mongoose
 // });
 
 
-app.listen(3001, '0.0.0.0',() =>
-    console.log(`🚀 Сервер запущен на http://0.0.0.0:${port}`)
-);
-
 
 app.get("/api/me", (req, res) => {
     const authHeader = req.headers.authorization;
@@ -85,3 +81,7 @@ app.get("/api/me", (req, res) => {
         res.status(401).json({ message: "Токен недействителен" });
     }
 });
+
+app.listen(port, process.env.HOST_IP,() =>
+    console.log(`🚀 Сервер запущен на http://${process.env.HOST_IP}:${port}`)
+);
