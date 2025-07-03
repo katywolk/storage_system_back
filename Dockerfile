@@ -1,9 +1,9 @@
-FROM node:20
+FROM node:20-slim
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --omit=dev && npm cache clean --force
 
 COPY . .
 
