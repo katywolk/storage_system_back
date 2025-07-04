@@ -16,7 +16,6 @@ const mixes = require("./routes/mixes");
 const app = express();
 app.use(express.json());
 
-const port = process.env.BACKEND_PORT;
 const uri = process.env.MONGO_URI;
 
 
