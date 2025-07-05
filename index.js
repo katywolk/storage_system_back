@@ -22,6 +22,7 @@ const uri = process.env.MONGO_URI;
 
 app.use(cors({
     origin: [
+        `http://localhost:${process.env.FRONTEND_PORT}`, // Front-end without port
         `http://${process.env.HOST_IP}`, // Front-end without port
         `http://${process.env.HOST_IP}:${process.env.FRONTEND_PORT}`, // Front-end port
         `http://${process.env.HOST_IP}:${process.env.BACKEND_PORT}`, // Back-end port
