@@ -56,7 +56,12 @@ app.get("/api/content", checkRoles("reader", "user", "admin"), (req, res) => {
 // Подключение к MongoDB
 mongoose
     .connect(uri)
-    .then(() => console.log("✅ Подключено к MongoDB"))
+    .then(() => {
+        console.log("✅ Подключено к MongoDB");
+        app.listen(3001, '0.0.0.0',() =>
+            console.log(`🚀 Сервер запущен на http://0.0.0.0:${3001}`)
+        );
+    })
     .catch((err) => console.error("❌ Ошибка MongoDB:", err));
 
 // Роуты
@@ -80,7 +85,3 @@ app.get("/api/me", (req, res) => {
         res.status(401).json({ message: "Токен недействителен" });
     }
 });
-
-app.listen(3001, '0.0.0.0',() =>
-    console.log(`🚀 Сервер запущен на http://0.0.0.0:${3001}`)
-);
