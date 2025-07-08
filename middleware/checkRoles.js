@@ -16,7 +16,7 @@ const checkRoles = (...allowedRoles) => {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await User.findOne({ id: decoded.id});
+            const user = await User.findOne({ _id: decoded.id});
 
             if (!allowedRoles.includes(user.role)) {
                 res.status(403).json({ message: "Недостаточно прав" });
