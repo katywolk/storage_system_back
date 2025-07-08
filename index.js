@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const express = require("express");
 
-const checkRoles = require("./middleware/checkRoles");
+const {checkRoles, ROLE} = require("./middleware/checkRoles");
 
 const authRoutes = require("./routes/auth");
 const tobaccosRoutes = require("./routes/tobaccos");
@@ -40,17 +40,17 @@ app.use(cookieParser());
 
 
 // 🔐 Только для админов
-app.get("/api/admin", checkRoles("admin"), (req, res) => {
+app.get("/api/admin", checkRoles(ROLE.ADMIN), (req, res) => {
     res.json({ message: "Панель администратора" });
 });
 
 // ✍️ Для user и admin — добавление комментариев
-app.post("/api/comment", checkRoles("user", "admin"), (req, res) => {
+app.post("/api/comment", checkRoles(ROLE.ADMIN, ROLE.USER), (req, res) => {
     res.json({ message: "Комментарий добавлен" });
 });
 
 // 📖 Для всех — доступ к контенту
-app.get("/api/content", checkRoles("reader", "user", "admin"), (req, res) => {
+app.get("/api/content", (req, res) => {
     res.json({ message: "Контент доступен всем" });
 });
 

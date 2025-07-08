@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Jar = require("../models/Jar");
+const {checkRoles, ROLE} = require("../middleware/checkRoles");
 
 // Получить конкретную банку
 router.get("/jar/:id", async (req, res) => {
@@ -27,7 +28,7 @@ router.get("/jars", async (req, res) => {
 });
 
 // Создать новую банку с авто-нумерацией
-router.post("/jars", async (req, res) => {
+router.post("/jars", checkRoles(ROLE.ADMIN), async (req, res) => {
     try {
         const count = await Jar.countDocuments();
         const title = `Банка №${count + 1}`;
@@ -47,7 +48,7 @@ router.post("/jars", async (req, res) => {
 });
 
 // Положить табак в банку (заменяет текущий)
-router.post("/jars/:jarId/add", async (req, res) => {
+router.post("/jars/:jarId/add", checkRoles(ROLE.USER, ROLE.ADMIN), async (req, res) => {
     try {
         const { jarId } = req.params;
         const { tobaccoId } = req.body;
@@ -73,7 +74,7 @@ router.post("/jars/:jarId/add", async (req, res) => {
 });
 
 // Удалить табак из банки
-router.delete("/jars/:jarId/tobacco", async (req, res) => {
+router.delete("/jars/:jarId/tobacco", checkRoles(ROLE.USER, ROLE.ADMIN),  async (req, res) => {
     try {
         const { jarId } = req.params;
 

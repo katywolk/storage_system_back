@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Tobacco = require("../models/Tobacco");
 const mongoose = require("mongoose");
+const {checkRoles, ROLE} = require("../middleware/checkRoles");
 
 
 // POST /api/tobaccos
-router.post("/", async (req, res) => {
+router.post("/", checkRoles(ROLE.ADMIN), async (req, res) => {
     try {
         const { title, flavor, description, type } = req.body;
 
@@ -123,7 +124,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkRoles(ROLE.ADMIN), async (req, res) => {
     try {
         const deleted = await Tobacco.findByIdAndDelete(req.params.id);
         if (!deleted) {
