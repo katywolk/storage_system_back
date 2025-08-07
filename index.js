@@ -32,7 +32,6 @@ app.use("/api/tobaccos", tobaccosRoutes); // подключение маршру
 app.use("/api/mixes", mixes);
 app.use("/api", itemRoutes);
 app.use("/api", authRoutes);
-app.use("/api/admin", adminRoute);
 app.use('/api/reviews', reviewRoutes);
 
 app.disable('x-powered-by');
