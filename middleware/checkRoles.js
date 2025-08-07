@@ -1,5 +1,4 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const { getUserByToken, getTokenFromHeaders } = require("../utils");
 
 const ROLE = {
     ADMIN: "admin",
@@ -8,15 +7,14 @@ const ROLE = {
 
 const checkRoles = (...allowedRoles) => {
     return async (req, res, next) => {
-        const token = req.headers.authorization?.split(" ")[1];
+        const token = getTokenFromHeaders(req.headers);
         if (!token) {
             res.status(401).json({ message: "Нет токена" });
             return;
         }
 
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await User.findOne({ _id: decoded.id});
+            const user = await getUserByToken(token);
 
             if (!allowedRoles.includes(user.role)) {
                 res.status(403).json({ message: "Недостаточно прав" });

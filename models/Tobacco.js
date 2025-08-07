@@ -7,12 +7,6 @@ const tobaccoSchema = new mongoose.Schema({
     type: { type: String, default: "tobacco" },
     imageUrl: { type: String },
     createdAt: { type: Date, default: Date.now },
-    tobaccos: [
-        {
-            tobaccoId: { type: mongoose.Schema.Types.ObjectId, ref: "Tobacco" },
-            percent: Number
-        }
-    ]
 });
 
 module.exports = mongoose.model("Tobacco", tobaccoSchema);

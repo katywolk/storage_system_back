@@ -8,21 +8,20 @@ const express = require("express");
 const {checkRoles, ROLE} = require("./middleware/checkRoles");
 
 const authRoutes = require("./routes/auth");
+const adminRoute = require("./routes/admin");
 const tobaccosRoutes = require("./routes/tobaccos");
 const itemRoutes = require("./routes/jar");
 const mixes = require("./routes/mixes");
-
+const reviewRoutes = require("./routes/reviews");
 
 const app = express();
-app.use(express.json());
-
 const uri = process.env.MONGO_URI;
 
-
-
+app.use(express.json());
 app.use(cors({
     origin: [
         `http://localhost:${process.env.FRONTEND_PORT}`, // Front-end without port
+        `http://localhost:${process.env.BACKEND_PORT}`, // Back-end without port
         `http://${process.env.HOST_IP}`, // Front-end without port
         `http://${process.env.HOST_IP}:${process.env.FRONTEND_PORT}`, // Front-end port
         `http://${process.env.HOST_IP}:${process.env.BACKEND_PORT}`, // Back-end port
@@ -34,6 +33,11 @@ app.use("/api/tobaccos", tobaccosRoutes); // подключение маршру
 app.use("/api/mixes", mixes);
 app.use("/api", itemRoutes);
 app.use("/api", authRoutes);
+app.use("/api/admin", adminRoute);
+app.use('/api/reviews', reviewRoutes);
+
+app.disable('x-powered-by');
+
 
 
 app.use(cookieParser());
@@ -89,3 +93,4 @@ app.get("/api/me", (req, res) => {
         res.status(401).json({ message: "Токен недействителен" });
     }
 });
+

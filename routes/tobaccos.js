@@ -1,38 +1,30 @@
 const express = require("express");
+const {ObjectId} = require('mongoose').Types;
 const router = express.Router();
 const Tobacco = require("../models/Tobacco");
-const mongoose = require("mongoose");
+const {createController} = require("../controllers/tobacco");
+const {getRating} = require("../utils")
 const {checkRoles, ROLE} = require("../middleware/checkRoles");
 
 
 // POST /api/tobaccos
-router.post("/", checkRoles(ROLE.ADMIN), async (req, res) => {
-    try {
-        const { title, flavor, description, type } = req.body;
-
-        if (!title || !flavor) {
-            return res.status(400).json({ message: "Заполните все обязательные поля" });
-        }
-
-        const newTobacco = new Tobacco({
-            title,
-            flavor,
-            description,
-            createdAt: new Date()
-        });
-
-        await newTobacco.save();
-        res.status(201).json({ message: "Табак добавлен", tobacco: newTobacco });
-
-    } catch (err) {
-        console.error("Ошибка при создании табака:", err);
-        res.status(500).json({ message: "Ошибка сервера" });
-    }
-});
+router.post("/", checkRoles(ROLE.ADMIN), createController);
 
 router.get("/", async (req, res) => {
     try {
-        const tobaccos = await Tobacco.find();
+        const tobaccos = await Tobacco.aggregate([
+            {
+                $lookup: {
+                    from: "reviews",         // колекция, к которой делаем JOIN
+                    localField: "_id", // поле в orders
+                    foreignField: "targetId",       // поле в customers
+                    as: "reviews"        // куда сохранить результат JOIN
+                }
+            }
+        ]).then((res) => {
+            return res.map(getRating)
+        });
+
         res.json(tobaccos);
     } catch (err) {
         console.error("Ошибка при получении списка табаков:", err);
@@ -45,17 +37,29 @@ router.get("/:id", async (req, res) => {
         const id = req.params.id;
 
         // Пробуем привести к ObjectId, если это возможно
-        const mongoose = require("mongoose");
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+        if (!ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Неверный формат ID" });
         }
 
-        const tobacco = await Tobacco.findById(id);
+        const tobacco = await Tobacco.aggregate([
+            {
+                $match: { _id: new ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "reviews",         // колекция, к которой делаем JOIN
+                    localField: "_id", // поле в orders
+                    foreignField: "targetId",       // поле в customers
+                    as: "reviews"        // куда сохранить результат JOIN
+                }
+            }
+        ])
+            .then(res => res?.[0]);
         if (!tobacco) {
             return res.status(404).json({ message: "Табак не найден" });
         }
 
-        res.json(tobacco);
+        res.json(getRating(tobacco));
     } catch (err) {
         console.error("Ошибка при получении табака:", err);
         res.status(500).json({ message: "Ошибка сервера" });
