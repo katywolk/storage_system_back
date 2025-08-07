@@ -8,7 +8,6 @@ const express = require("express");
 const {checkRoles, ROLE} = require("./middleware/checkRoles");
 
 const authRoutes = require("./routes/auth");
-const adminRoute = require("./routes/admin");
 const tobaccosRoutes = require("./routes/tobaccos");
 const itemRoutes = require("./routes/jar");
 const mixes = require("./routes/mixes");
